@@ -20,6 +20,7 @@ type Archivex interface {
 	Create(name string) error
 	Add(name string, file []byte) error
 	AddFile(name string) error
+	AddFileAs(name string, as string) error
 	AddAll(dir string, includeCurrentFolder bool) error
 	Close() error
 }
@@ -82,6 +83,23 @@ func (z *ZipFile) AddFile(name string) error {
 		return err
 	}
 	filep, err := z.Writer.Create(name)
+	if err != nil {
+		return err
+	}
+	_, err = filep.Write(bytearq)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// AddFile add file from dir in archive
+func (z *ZipFile) AddFileAs(name string, as string) error {
+	bytearq, err := ioutil.ReadFile(name)
+	if err != nil {
+		return err
+	}
+	filep, err := z.Writer.Create(as)
 	if err != nil {
 		return err
 	}
